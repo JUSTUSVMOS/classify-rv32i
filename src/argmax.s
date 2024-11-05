@@ -31,6 +31,22 @@ argmax:
     li t2, 1
 loop_start:
     # TODO: Add your own implementation
+    bge t2, a1, end_argmax
+    slli t3, t2, 2
+    add t4, a0, t3
+    lw t5, 0(t4)
+
+    blt t5, t0, skip_update
+    addi t0, t5, 0
+    addi t1, t2, 0
+
+skip_update:
+    addi t2, t2, 1
+    j loop_start
+
+end_argmax:
+    addi a0, t1, 0
+    ret
 
 handle_error:
     li a0, 36
