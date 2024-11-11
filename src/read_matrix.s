@@ -79,13 +79,13 @@ read_matrix:
     li s1, 0           # initial s1
     mv t3, t1          
 
-multiply_loop:
-    beqz t3, multiply_done  
+mul_loop:
+    beqz t3, mul_done  
     add s1, s1, t2          # s1 = s1 + t2
     addi t3, t3, -1         # t3 = t3 - 1
-    j multiply_loop        
+    j mul_loop        
 
-multiply_done:
+mul_done:
     slli t3, s1, 2
     sw t3, 24(sp)    # size in bytes
 
