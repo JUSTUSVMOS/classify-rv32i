@@ -76,16 +76,22 @@ read_matrix:
 
     # mul s1, t1, t2   # s1 is number of elements
     # FIXME: Replace 'mul' with your own implementation
-    li s1, 0           # initial s1
-    mv t3, t1          
+    mv t5, t1        # t5 = t1 (num rows)
+    mv t6, t2        # t6 = t2 (num cols)
+    li s1, 0         # s1 = 0 (result accumulator)
+    beq t6, zero, multiplication_done  # if t6 == 0, skip multiplication
 
 mul_loop:
-    beqz t3, mul_done  
-    add s1, s1, t2          # s1 = s1 + t2
-    addi t3, t3, -1         # t3 = t3 - 1
-    j mul_loop        
+    andi t4, t6, 1       # t4 = t6 & 1
+    beq t4, zero, skip_add
+    add s1, s1, t5       # s1 += t5
+skip_add:
+    slli t5, t5, 1       # t5 <<= 1
+    srli t6, t6, 1       # t6 >>= 1
+    bne t6, zero, mul_loop
 
-mul_done:
+multiplication_done:
+
     slli t3, s1, 2
     sw t3, 24(sp)    # size in bytes
 

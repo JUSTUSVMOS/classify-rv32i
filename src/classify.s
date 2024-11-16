@@ -167,6 +167,16 @@ classify:
     lw t0, 0(s3)
     lw t1, 0(s8)
     # mul a0, t0, t1 # FIXME: Replace 'mul' with your own implementation
+    li a0, 0            
+    li t2, 0           
+
+    mul_loop1:
+        beq t2, t1, mul_end1  
+        add a0, a0, t0        
+        addi t2, t2, 1        
+        j mul_loop1          
+
+    mul_end1:
     slli a0, a0, 2
     jal malloc 
     beq a0, x0, error_malloc
@@ -206,6 +216,16 @@ classify:
     # mul a1, t0, t1 # length of h array and set it as second argument
     # FIXME: Replace 'mul' with your own implementation
     
+    li a1, 0            
+    li t2, 0            
+
+    mul_loop2:
+        beq t2, t1, mul_end2  
+        add a1, a1, t0        
+        addi t2, t2, 1     
+        j mul_loop2          
+
+    mul_end2:
     jal relu
     
     lw a0, 0(sp)
@@ -224,10 +244,23 @@ classify:
     sw a5, 20(sp)
     sw a6, 24(sp)
     
-    lw t0, 0(s3)
-    lw t1, 0(s6)
+    # lw t0, 0(s3)
+    # lw t1, 0(s6)
     # mul a0, t0, t1 # FIXME: Replace 'mul' with your own implementation
-    slli a0, a0, 2
+    lw t0, 0(s3)       
+    lw t1, 0(s6)        
+    li a0, 0            
+    li t2, 0             
+
+    mul_loop3:
+        beq t2, t1, mul_end3  # 如果 t2 == t1，跳出循环
+        add a0, a0, t0        # a0 += t0
+        addi t2, t2, 1        # t2 += 1
+        j mul_loop3           # 跳回循环开始
+
+    mul_end3:
+    slli a0, a0, 2           # a0 *= 4，转换为字节数
+
     jal malloc 
     beq a0, x0, error_malloc
     mv s10, a0 # move o to s10
@@ -283,15 +316,25 @@ classify:
     sw a1, 4(sp)
     sw a2, 8(sp)
     
-    mv a0, s10 # load o array into first arg
-    lw t0, 0(s3)
-    lw t1, 0(s6)
-    mul a1, t0, t1 # load length of array into second arg
-    # FIXME: Replace 'mul' with your own implementation
-    
+    mv a0, s10          
+    lw t0, 0(s3)       
+    lw t1, 0(s6)   
+    # FIXME: Replace 'mul' with your own implementatio
+        
+    li a1, 0         
+    li t2, 0            
+
+    mul_loop4:
+        beq t2, t1, mul_end4  
+        add a1, a1, t0        
+        addi t2, t2, 1        
+        j mul_loop4           
+
+    mul_end4:
     jal argmax
-    
+
     mv t0, a0 # move return value of argmax into t0
+
     
     lw a0, 0(sp)
     lw a1, 4(sp)
